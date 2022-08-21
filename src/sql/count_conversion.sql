@@ -14,9 +14,8 @@ user_group_messages as (
     from ZHUKOVANANYANDEXRU__DWH.l_user_message as lum
     left join ZHUKOVANANYANDEXRU__DWH.l_groups_dialogs as lgm
     on lum.hk_message_id = lgm.hk_message_id
-    where hk_group_id in (select *
-    from group_need_to_analyse as gnta
-    where gnta.hk_group_id = lgm.hk_group_id)
+    inner join group_need_to_analyse as gnta
+    on gnta.hk_group_id = lgm.hk_group_id
     group by hk_group_id
     
 ),
@@ -27,10 +26,9 @@ user_group_log as (
     from ZHUKOVANANYANDEXRU__DWH.s_auth_history as sah
     left join ZHUKOVANANYANDEXRU__DWH.l_user_group_activity as luga
     on sah.hk_l_user_group_activity = luga.hk_l_user_group_activity
+    inner join group_need_to_analyse as gnta
+    on gnta.hk_group_id = lgm.hk_group_id
     where event = 'add'
-    and hk_group_id in (select *
-    from group_need_to_analyse as gnta
-    where gnta.hk_group_id = luga.hk_group_id)
     group by
     	hk_group_id
 ) 
